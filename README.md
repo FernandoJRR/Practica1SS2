@@ -1,4 +1,5 @@
 # Practica 1 - Seminario de Sistemas 2
+### Por: Fernando Rodriguez - 202030542 - 3696417440901
 ## Descripción General
 
 Este proyecto consiste en la limpieza, procesamiento y carga de datos en una base de datos PostgreSQL utilizando SQLAlchemy y Pandas. El propósito principal es manejar datos relacionados con registros de casos de municipios en Guatemala, asegurando la integridad de los datos mediante validaciones y manejo de errores durante el proceso de inserción.
