@@ -82,6 +82,13 @@ def eda_multivariable(df, dfNoLoc, dfMerge):
     graficas_comparacion(dfMerge)
     calcular_correlaciones(dfNoLoc)
 
+def graficar_mapa_calor(correlacion, nombre_correlacion):
+    # Gráfico de mapa de calor
+    plt.figure(figsize=(10, 6))
+    sns.heatmap(correlacion, annot=True, cmap='coolwarm', fmt=".2f")
+    plt.title(f"Mapa de Calor - Correlación de {nombre_correlacion}")
+    plt.show()
+
 def calcular_correlaciones(df):
     df = df.select_dtypes(include=['int64', 'float64'])
 
@@ -98,10 +105,8 @@ def calcular_correlaciones(df):
     #print(kendall_corr)
 
     # Gráfico de mapa de calor
-    plt.figure(figsize=(10, 6))
-    sns.heatmap(pearson_corr, annot=True, cmap='coolwarm', fmt=".2f")
-    plt.title("Mapa de Calor - Correlación de Pearson")
-    plt.show()
+    graficar_mapa_calor(pearson_corr, 'Pearson')
+    graficar_mapa_calor(spearman_corr, 'Spearman')
 
 def graficas_comparacion(df):
     plt.figure(figsize=(18, 12))
