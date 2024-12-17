@@ -48,6 +48,9 @@ class Registro(Base):
     # Relación con la tabla Municipio
     municipio = relationship("Municipio", back_populates="registros")
 
+def obtener_conexion():
+    return engine.connect()
+
 # Crear tablas
 def crear_tablas():
     print("Creando tablas")
@@ -164,3 +167,27 @@ def insertar_datos(df):
 
     finally:
         session.close()
+
+def obtener_datos():
+    conexion = obtener_conexion()
+    consulta = """
+    SELECT r.fecha, r.casos, r.fallecidos, m.nombre AS nombre_municipio,
+           d.nombre AS nombre_departamento, m.poblacion
+    FROM registro r
+    JOIN municipio m ON r.id_municipio = m.id
+    JOIN departamento d ON m.id_departamento = d.id;
+    """
+    df = pd.read_sql_query(consulta, conexion)
+    print("Datos extraídos correctamente.")
+    return df
+
+def obtener_datos_no_loc():
+    conexion = obtener_conexion()
+    consulta = """
+    SELECT r.fecha, r.casos, r.fallecidos
+    FROM registro r
+    WHERE r.id_municipio IS NULL;
+    """
+    df = pd.read_sql_query(consulta, conexion)
+    print("Datos extraídos correctamente.")
+    return df

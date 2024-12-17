@@ -1,7 +1,8 @@
 import pandas as pd
 import os
 from utils.downloader import download_csv_from_url
-from source.database import crear_tablas, insertar_datos, drop_registros
+from utils.stats import eda_monovariable, histograma_casos, rango_intercuartilico, calcular_cumulativo
+from source.database import crear_tablas, insertar_datos, drop_registros, obtener_datos, obtener_datos_no_loc
 
 url_casos_globales = "https://drive.google.com/uc?export=download&id=1V-vFNkkYiSPQClASZeKx-cTvwlE5tOFD"
 path_casos_locales = os.path.join(os.path.dirname(__file__), 'data', 'municipio.csv')
@@ -13,7 +14,23 @@ def validar_tipos_columnas(df, tipos):
             df = df[df[columna].apply(lambda x: isinstance(x, tipo))]
     return df
 
+
 if __name__ == "__main__":
+    dfData = obtener_datos()
+    dfData = calcular_cumulativo(dfData, 'fallecidos', 'fallecidos_acumulado')
+    dfData = calcular_cumulativo(dfData, 'casos', 'casos_acumulado')
+    dfDataNoLoc = obtener_datos_no_loc()
+    dfDataNoLoc = calcular_cumulativo(dfDataNoLoc, 'fallecidos', 'fallecidos_acumulado')
+
+    #Combinacion para tener poblacion y fallecidos en el mismo dataset
+    dfDataMerge = pd.merge(dfData, dfDataNoLoc, on=['fecha'], how='inner')
+    dfDataMerge = dfDataMerge[['fecha', 'fallecidos_y', 'poblacion', 'nombre_municipio', 'nombre_departamento', 'fallecidos_acumulado_y']]
+    dfDataMerge.rename(columns={'fallecidos_y' : 'fallecidos', 'fallecidos_acumulado' : 'fallecidos_acumulado_y'}, inplace=True)
+
+    print("EDA Monovariable")
+    eda_monovariable(dfData, dfDataNoLoc)
+
+def etl_process():
     #Se obtiene el archivo global
     print("Descargando archivo CSV Global")
     csv_file = download_csv_from_url(url_casos_globales)
