@@ -7,7 +7,6 @@ def calcular_cumulativo(df, columna, nombre_acumulada):
     return df
 
 def descripcion_general(df):
-    print("Descripción Estadística:")
     print(df[['casos', 'fallecidos', 'poblacion']].describe())
 
 def graficar_histograma(df, columna):
